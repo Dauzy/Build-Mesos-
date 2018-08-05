@@ -1,0 +1,48 @@
+- hosts: mesos-masters
+  user: ubuntu
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Update repositories cache
+      apt: update_cache=yes
+
+    - name: Add an apt key 
+      apt_key: 
+        keyserver: keyserver.ubuntu.com
+        id: E56151BF
+  
+    - name: Add distro
+      shell: DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]') && CODENAME=$(lsb_release -cs) && echo "deb http://repos.mesosphere.com/${DISTRO} ${CODENAME} main" | sudo tee /etc/apt/sources.list.d/mesosphere.list
+  
+    - name: Update repositories cache
+      become: yes
+      apt: update_cache=yes
+
+    - name: Add Java repository, is a dependency for marathon
+      apt_repository:
+        repo: ppa:webupd8team/java 
+
+    - name: Update repositories cache
+      apt: update_cache=yes
+
+    - name: Accept Java 8 License
+      become: yes
+      debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+
+    - name: Install Java 8
+      apt:
+        name: oracle-java8-installer
+
+    - name: Install Mesos
+      apt:
+        name: mesos 
+
+    - name: Install Marathon
+      apt:
+        name: marathon
+
+    - include: zk-config.yml
+    - include: mesos-master-config.yml
+    - include: marathon-config.yml
+    - include: restart-services.yml
+   

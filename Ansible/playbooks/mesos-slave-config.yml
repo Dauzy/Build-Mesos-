@@ -1,0 +1,3 @@
+  - name: Config mesos cluster properties
+    shell: IP_PUBLIC="$(curl http://169.254.169.254/latest/meta-data/local-ipv4)"  && echo $IP_PUBLIC | sudo tee /etc/mesos-slave/ip && cp /etc/mesos-slave/ip /etc/mesos-slave/hostname && echo "zk://54.174.81.102:2181/mesos" > /etc/mesos/zk
+  

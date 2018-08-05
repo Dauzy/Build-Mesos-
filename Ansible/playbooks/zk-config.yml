@@ -1,0 +1,2 @@
+  - name: Config Zookeeper
+    shell: echo "1" > /etc/zookeeper/conf/myid && IP_PUBLIC="$(curl http://169.254.169.254/latest/meta-data/public-ipv4)"  && echo "zk://$IP_PUBLIC:2181/mesos" > /etc/mesos/zk
